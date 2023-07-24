@@ -94,29 +94,32 @@ class MovieController extends Controller
         ]);
         
         
-        $movcast = new MovieCast;
-        $movcast->act_id = $request->input('act_id');
-        $movcast->mov_id = $newMovId;
-        $movcast->role = $request->input('role');
+         // Create MovieCast record
+         $movcast = MovieCast::create([
+            'act_id' => $request->input('act_id'),
+            'mov_id' => $newMovId,
+            'role' => $request->input('role'),
+        ]);
 
-        $movDirection = new MovieDirection;
-        $movDirection->dir_id = $request->input('dir_id');
-        $movDirection->mov_id = $newMovId;
+        // Create MovieDirection record
+        $movDirection = MovieDirection::create([
+            'dir_id' => $request->input('dir_id'),
+            'mov_id' => $newMovId,
+        ]);
 
-        $movgen = new MovieGenres;
-        $movgen->mov_id = $newMovId;
-        $movgen->gen_id = $request->input('gen_id');
+        // Create MovieGenres record
+        $movgen = MovieGenres::create([
+            'mov_id' => $newMovId,
+            'gen_id' => $request->input('gen_id'),
+        ]);
 
-        $rating = new Rating;
-        $rating->mov_id = $newMovId;
-        $rating->rev_id = $request->input('rev_id');
-        $rating->rev_stars = $request->input('rating');
-        $rating->num_o_ratings = $randomNumRatings;
-
-        $movcast->save();
-        $movDirection->save();
-        $movgen->save();
-        $rating->save();
+        // Create Rating record
+        $rating = Rating::create([
+            'mov_id' => $newMovId,
+            'rev_id' => $request->input('rev_id'),
+            'rev_stars' => $request->input('rating'),
+            'num_o_ratings' => $randomNumRatings,
+        ]);
     
         return redirect()->route('movies.index')->with('success', 'Movie created successfully.');
     }
