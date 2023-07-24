@@ -86,15 +86,18 @@ class MovieController extends Controller
         $actors = Actor::find($request->input('act_id'));
         $directors = Director::find($request->input('dir_id'));
         $genres = Genres::find($request->input('gen_id'));
-    
-        $movie->actors()->attach($actors, ['role' => $request->input('role')]);
-        $movie->directors()->attach($directors);
-        $movie->genres()->attach($genres);
-    
-        // Assuming you have a `Reviewer` model and `ratings` relationship defined in the `Movie` model
-        $reviewer = Reviewer::find($request->input('rev_id'));
-        $rating = new Rating(['rating' => $request->input('rating')]);
-        $reviewer->ratings()->save($rating);
+        
+        $data=array("act_id"=>$request->input('act_id'),"mov_id"=>$request->input('mov_id'),"role"=>$request->input('role'));
+        DB::table('movie_cast')->insert($data);
+
+        $dirData = array("dir_id"=>$request->input('dir_id'),"mov_id"=>$request->input('mov_id'));
+        DB::table('movie_direction')->insert($dirData);
+
+        $genData = array("mov_id"=>$request->input('mov_id'), "gen_id"=>$request->input('gen_id'));
+        DB::table('movie_genres')->insert($genData);
+
+        $revData = array("mov_id"=>$request->input('mov_id'), "rev_id"=>$request->input('rev_id'), "rev_stars"=>$request->input('rating'), "num_o_ratings"=>222);
+        DB::table('rating')->insert($revData);
     
         return redirect()->route('movies.index')->with('success', 'Movie created successfully.');
     }
