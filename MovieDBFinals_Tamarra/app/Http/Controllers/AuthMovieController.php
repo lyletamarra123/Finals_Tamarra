@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 use App\Models\Movie;
 
@@ -48,9 +49,21 @@ class AuthMovieController extends Controller
         $credentials = $request->only('email', 'password');
         if (Auth::attempt($credentials)) {
             return redirect()->intended('movies');
+        } else {
+            // Check if the email exists in the database
+            $user = User::where('email', $request->email)->first();
+    
+            if (!$user) {
+                throw ValidationException::withMessages([
+                    'email' => 'The provided email does not exist in our records.',
+                ]);
+            }
+    
+            // Authentication failed, add error message for invalid password
+            throw ValidationException::withMessages([
+                'password' => 'Invalid password.',
+            ]);
         }
-  
-        return redirect("login");
     }
       
     /**
