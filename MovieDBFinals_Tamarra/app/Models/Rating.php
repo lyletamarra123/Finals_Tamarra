@@ -10,7 +10,8 @@ class Rating extends Model
     use HasFactory;
     public $incrementing = false;
     protected $table = 'rating';
-
+    public $timestamps = false;
+    
     protected $fillable = [
         'mov_id',
         'rev_id',

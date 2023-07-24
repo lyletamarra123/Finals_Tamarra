@@ -10,7 +10,9 @@ use App\Models\Actor;
 use App\Models\Genres;
 use App\Models\Reviewer;
 use App\Models\Rating;
-
+use App\Models\MovieCast;
+use App\Models\MovieDirection;
+use App\Models\MovieGenres;
 class MovieController extends Controller
 {
     /**
@@ -57,7 +59,7 @@ class MovieController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'mov_id' => 'required|integer',
+            // 'mov_id' => 'required|integer',
             'mov_title' => 'required|string|max:255',
             'mov_year' => 'required|integer',
             'mov_time' => 'required|string|max:255',
@@ -70,10 +72,19 @@ class MovieController extends Controller
             'rev_id' => 'required|exists:reviewer,rev_id',
             'role' => 'required|string|max:30', // Assuming the maximum length of 'role' is 30 characters
         ]);
-    
+
+        // Get the latest movie's mov_id
+        $latestMovie = Movie::latest('mov_id')->first();
+
+        // Increment the mov_id for the new movie
+        $newMovId = $latestMovie ? $latestMovie->mov_id + 1 : 1;
+
+        // Generate a random number between 100 and 500
+        $randomNumRatings = rand(100, 5000);
+
         // Create the Movie model
         $movie = Movie::create([
-            'mov_id' => $request->input('mov_id'),
+            'mov_id' => $newMovId,
             'mov_title' => $request->input('mov_title'),
             'mov_year' => $request->input('mov_year'),
             'mov_time' => $request->input('mov_time'),
@@ -81,23 +92,31 @@ class MovieController extends Controller
             'mov_dt_rel' => $request->input('mov_dt_rel'),
             'mov_rel_country' => $request->input('mov_rel_country'),
         ]);
-    
-        // Associate actors, directors, genres
-        $actors = Actor::find($request->input('act_id'));
-        $directors = Director::find($request->input('dir_id'));
-        $genres = Genres::find($request->input('gen_id'));
         
-        $data=array("act_id"=>$request->input('act_id'),"mov_id"=>$request->input('mov_id'),"role"=>$request->input('role'));
-        DB::table('movie_cast')->insert($data);
+        
+        $movcast = new MovieCast;
+        $movcast->act_id = $request->input('act_id');
+        $movcast->mov_id = $newMovId;
+        $movcast->role = $request->input('role');
 
-        $dirData = array("dir_id"=>$request->input('dir_id'),"mov_id"=>$request->input('mov_id'));
-        DB::table('movie_direction')->insert($dirData);
+        $movDirection = new MovieDirection;
+        $movDirection->dir_id = $request->input('dir_id');
+        $movDirection->mov_id = $newMovId;
 
-        $genData = array("mov_id"=>$request->input('mov_id'), "gen_id"=>$request->input('gen_id'));
-        DB::table('movie_genres')->insert($genData);
+        $movgen = new MovieGenres;
+        $movgen->mov_id = $newMovId;
+        $movgen->gen_id = $request->input('gen_id');
 
-        $revData = array("mov_id"=>$request->input('mov_id'), "rev_id"=>$request->input('rev_id'), "rev_stars"=>$request->input('rating'), "num_o_ratings"=>222);
-        DB::table('rating')->insert($revData);
+        $rating = new Rating;
+        $rating->mov_id = $newMovId;
+        $rating->rev_id = $request->input('rev_id');
+        $rating->rev_stars = $request->input('rating');
+        $rating->num_o_ratings = $randomNumRatings;
+
+        $movcast->save();
+        $movDirection->save();
+        $movgen->save();
+        $rating->save();
     
         return redirect()->route('movies.index')->with('success', 'Movie created successfully.');
     }
@@ -131,7 +150,11 @@ class MovieController extends Controller
      */
     public function destroy(Movie $movie)
     {
-        $movie->delete();
+        // Assuming $movie is an instance of the Movie class with the desired mov_id
+        $movie = Movie::find($movie->mov_id);
+
+        // Call the deleteMovie() method to delete the movie and related records
+        $movie->deleteMovie();
         return redirect()->route('movies.index')->with('success','Movie has been deleted successfully');
     }
 }

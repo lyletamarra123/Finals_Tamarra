@@ -10,7 +10,8 @@ class MovieGenres extends Model
     use HasFactory;
     public $incrementing = false;
     protected $table = 'movie_genres';
-
+    public $timestamps = false;
+    
     protected $fillable = [
         'mov_id',
         'gen_id',

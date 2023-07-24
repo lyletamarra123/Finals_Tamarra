@@ -11,7 +11,8 @@ class MovieDirection extends Model
     public $incrementing = false;
     protected $table = 'movie_direction';
     protected $primaryKey = 'dir_id';
-
+    public $timestamps = false;
+    
     protected $fillable = [
         'dir_id',
         'mov_id',

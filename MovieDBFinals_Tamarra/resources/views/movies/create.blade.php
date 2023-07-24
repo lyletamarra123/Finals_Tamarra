@@ -21,7 +21,7 @@
         <form action="{{ route('movies.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="row">
-                <div class="col-xs-12 col-sm-12 col-md-12">
+                {{-- <div class="col-xs-12 col-sm-12 col-md-12">
                     <div class="form-group">
                         <strong>Movie ID:</strong>
                         <input type="text" name="mov_id" class="form-control" placeholder="Title of the Movie">
@@ -29,7 +29,7 @@
                         <div class="alert alert-danger mt-1 mb-1">{{ $message }}</div>
                         @enderror
                     </div>
-                </div>
+                </div> --}}
                 <div class="col-xs-12 col-sm-12 col-md-12">
                     <div class="form-group">
                         <strong>Movie Title:</strong>

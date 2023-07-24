@@ -43,23 +43,43 @@ class Movie extends Model
         return $this->hasMany(Rating::class, 'mov_id');
     }
 
-    //API-RELATIONSHIP
-    public function director()
+    public function deleteMovie()
     {
-        return $this->hasManyThrough(Director::class, MovieDirection::class, 'mov_id', 'dir_id', 'mov_id', 'dir_id');
-    }
-    public function genre()
-    {
-        return $this->hasManyThrough(Genres::class, MovieGenres::class, 'mov_id', 'gen_id', 'mov_id', 'gen_id');
-    }
-
-    public function actor()
-    {
-        return $this->hasManyThrough(Actor::class, MovieCast::class, 'mov_id', 'act_id', 'mov_id', 'act_id');
+        $this->deleteMovieCast();
+        $this->deleteMovieDirection();
+        $this->deleteMovieGenres();
+        $this->deleteRatings();
+        $this->deleteMovieRecord();
     }
 
-    public function reviewer()
+    // Private helper methods for deleting related records
+    private function deleteMovieCast()
     {
-        return $this->hasManyThrough(Reviewer::class, Rating::class, 'mov_id', 'rev_id', 'mov_id', 'rev_id');
+        // Delete related records from the movie_cast table
+        $this->actors()->detach();
+    }
+
+    private function deleteMovieDirection()
+    {
+        // Delete related records from the movie_direction table
+        $this->directors()->detach();
+    }
+
+    private function deleteMovieGenres()
+    {
+        // Delete related records from the movie_genres table
+        $this->genres()->detach();
+    }
+
+    private function deleteRatings()
+    {
+        // Delete related records from the ratings table
+        $this->ratings()->delete();
+    }
+
+    private function deleteMovieRecord()
+    {
+        // Delete the movie record itself
+        $this->delete();
     }
 }
