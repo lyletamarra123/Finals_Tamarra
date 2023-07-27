@@ -37,7 +37,7 @@
             </div>
             <div class="col-md-6 text-right">
                 <form action="{{ route('movies.destroy',$movie->mov_id) }}" method="Post">
-                <a href="{{ route('movies.index') }}" class="btn btn-success mt-4">Edit</a>
+                <a href="{{ route('movies.edit',$movie->mov_id) }}" class="btn btn-success mt-4">Edit</a>
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="btn btn-danger mt-4">Delete</button>

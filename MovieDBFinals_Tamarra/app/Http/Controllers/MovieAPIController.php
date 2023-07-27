@@ -39,14 +39,28 @@ class MovieAPIController extends Controller
     {
         $movie = Movie::find($mov_id);  
         if ($movie) {
-            $director = $movie->director;
-            $genre = $movie->genre;
-            $actors = $movie->actor;
-            $reviewers = $movie->reviewer;
-    
-            return response()->json(['movie' => $movie]);
+            // Get director(s)
+            $directors = $movie->directors()->get();
+
+            // Get genre(s)
+            $genres = $movie->genres()->get();
+
+            // Get actor(s) with their respective roles in the movie
+            $actors = $movie->actors()->withPivot('role')->get();
+
+            // Get reviewer(s) or ratings (assuming there's a Rating model)
+            $reviewers = $movie->ratings()->get();
+
+            return response()->json([
+                'movie' => $movie,
+                'directors' => $directors,
+                'genres' => $genres,
+                'actors' => $actors,
+                'reviewers' => $reviewers,
+            ]);
         } else {
             return response()->json(['error' => 'Movie not found'], 404);
         }
     }
+
 }
