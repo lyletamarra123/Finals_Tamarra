@@ -23,10 +23,10 @@ use App\Http\Controllers\AuthMovieController;
 // Route::get('registration', [AuthMovieController::class, 'showRegisterForm'])->name('register');
 // Route::post('post-registration', [AuthMovieController::class, 'postRegistration'])->name('register.post');
 
-// Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth:sanctum', 'web')->group(function () {
     Route::get('/moviesAPI', [MovieAPIController::class, 'getMovies']);
     Route::get('/actorsAPI', [MovieAPIController::class, 'getActors']);
     Route::get('/genresAPI', [MovieAPIController::class, 'getGenres']);
     Route::get('/directorsAPI', [MovieAPIController::class, 'getDirectors']);
     Route::get('/moviesAPI/{mov_id}', [MovieAPIController::class, 'getMovieDetails']);
-// });
+});
